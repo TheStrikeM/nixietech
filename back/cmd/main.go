@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"nixietech/internal/storage/mongo"
 	"nixietech/utils/config"
 	"nixietech/utils/logger"
 )
@@ -11,4 +12,7 @@ func main() {
 	cfg := config.GetConfig()
 
 	log.Info(fmt.Sprintf("Go service success started. Mongo URI - %s", cfg.MongoURI))
+
+	storage, disconnect := mongo.New(cfg.MongoURI)
+	defer disconnect()
 }
