@@ -29,7 +29,7 @@ func (rest *RestApiSrv) StartServer() error {
 
 	rest.Router.HandleFunc("/clocks", rest.AllClocksHandler)
 	rest.Router.HandleFunc("/clock/{id}", rest.ClockHandler)
-	rest.Router.HandleFunc("/create-order", rest.CreateOrder).Methods("POST")
+	rest.Router.HandleFunc("/creatorder", rest.CreateOrder).Methods("POST")
 
 	err := http.ListenAndServe(":8080", rest.Router)
 	if err != nil {
