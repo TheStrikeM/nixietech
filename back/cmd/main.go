@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	consts "nixietech/internal"
 	"nixietech/internal/storage/mongo"
 	"nixietech/utils/config"
 	"nixietech/utils/logger"
@@ -15,4 +16,6 @@ func main() {
 
 	storage, disconnect := mongo.New(cfg.MongoURI)
 	defer disconnect()
+
+	storage.GetCollection(consts.CollectionClockName)
 }

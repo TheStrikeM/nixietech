@@ -2,6 +2,8 @@ package mongo
 
 import (
 	"context"
+	"fmt"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
@@ -25,6 +27,14 @@ func New(mongoURI string) (*Storage, func()) {
 				log.Fatal(err)
 			}
 		}
+}
+
+func ObjectId(item interface{}) primitive.ObjectID {
+	id, err := primitive.ObjectIDFromHex(fmt.Sprintf("%v", item))
+	if err != nil {
+		log.Fatal(err)
+	}
+	return id
 }
 
 func (s *Storage) GetCollection(name string) *mongo.Collection {
