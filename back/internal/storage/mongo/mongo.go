@@ -5,6 +5,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
+	consts "nixietech/internal"
 )
 
 type Storage struct {
@@ -12,6 +13,7 @@ type Storage struct {
 }
 
 func New(mongoURI string) (*Storage, func()) {
+	// Здесь будет логика работы с таймаутами
 	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(mongoURI))
 	if err != nil {
 		log.Fatal(err)
@@ -23,4 +25,8 @@ func New(mongoURI string) (*Storage, func()) {
 				log.Fatal(err)
 			}
 		}
+}
+
+func (s *Storage) GetCollection(name string) *mongo.Collection {
+	return s.Client.Database(consts.DatabaseName).Collection(name)
 }
