@@ -24,14 +24,12 @@ func New(storage *mongoStorage.Storage) *Clock {
 }
 
 func (manager *Clock) AddClock(clock storage.ClockWithoutId) (*storage.Clock[primitive.ObjectID], error) {
-
 	clockId, err := manager.collection.InsertOne(context.TODO(), clock)
 	if err != nil {
 		return nil, err
 	}
-
 	return &storage.Clock[primitive.ObjectID]{
-		Id:        mongoStorage.ObjectId(clockId),
+		Id:        mongoStorage.ObjectId(mongoStorage.InsertedIdToString(clockId.InsertedID)),
 		Name:      clock.Name,
 		Avatar:    clock.Avatar,
 		Photos:    clock.Photos,

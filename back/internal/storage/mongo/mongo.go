@@ -8,6 +8,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
 	consts "nixietech/internal"
+	"strings"
 )
 
 type Storage struct {
@@ -35,6 +36,10 @@ func ObjectId(item interface{}) primitive.ObjectID {
 		log.Fatal(err)
 	}
 	return id
+}
+
+func InsertedIdToString(item interface{}) string {
+	return strings.Split(fmt.Sprintf("%v", item), "\"")[1]
 }
 
 func (s *Storage) GetCollection(name string) *mongo.Collection {
