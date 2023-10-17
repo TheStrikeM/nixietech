@@ -15,8 +15,8 @@ type TypeTwoSettings struct {
 	storage    *mongoStorage.Storage
 }
 
-func NewTwo(storage *mongoStorage.Storage) *TypeOneSettings {
-	return &TypeOneSettings{
+func NewTwo(storage *mongoStorage.Storage) *TypeTwoSettings {
+	return &TypeTwoSettings{
 		storage:    storage,
 		collection: storage.GetCollection(consts.CollectionOrderName),
 	}

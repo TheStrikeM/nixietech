@@ -10,11 +10,11 @@ import (
 var instance *config.Config
 var once sync.Once
 
-func GetConfig() *config.Config {
+func GetConfig(configName string) *config.Config {
 	once.Do(func() {
 		slog.Info("read application configuration")
 		instance = &config.Config{}
-		if err := cleanenv.ReadConfig("config.yaml", instance); err != nil {
+		if err := cleanenv.ReadConfig(configName, instance); err != nil {
 			help, _ := cleanenv.GetDescription(instance, nil)
 			slog.Error(help)
 			slog.Error(err.Error())
