@@ -26,7 +26,7 @@ func New(storage *mongoStorage.Storage, config *config.Config) *Fetcher {
 		clockDbManager:           mongoClock.New(storage),
 		orderDbManager:           mongoOrder.New(storage),
 		typeOneSettingsDbManager: mongoSettings.NewOne(storage),
-		typeTwoSettingsDbManager: mongoSettings.NewTwo(storage),
+		typeTwoSettingsDbManager: (*mongoSettings.TypeTwoSettings)(mongoSettings.NewTwo(storage)),
 	}
 }
 

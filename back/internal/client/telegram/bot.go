@@ -5,8 +5,12 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"log"
 	"log/slog"
+	"nixietech/internal/client/telegram/callbackquery"
+	"nixietech/internal/client/telegram/conditions"
+	"nixietech/internal/client/telegram/permissions"
 	"nixietech/internal/config"
 	"nixietech/internal/fetcher"
+	"nixietech/utils/telegram/message"
 )
 
 type Api struct {
@@ -29,13 +33,30 @@ func New(config *config.Config, fetcher fetcher.Fetcher) *Api {
 	}
 }
 
-func (api *Api) IsAdmin(username string) bool {
-	for _, admin := range api.config.Admins {
-		if admin == username {
-			return true
-		}
+func showMenu(update *tgbotapi.Update, api *Api) {
+	initialHelpMessage := api.config.BotMessages.InitialHelpMessage
+	permissionsPrefixFull := api.config.BotMessages.PermissionPrefixFull
+	parsedMessage := permissions.ParseHashTags(initialHelpMessage, []permissions.HashTags{
+		permissions.NewTag("$NAME$", fmt.Sprintf("%s %s", update.Message.From.FirstName, update.Message.From.LastName)),
+		permissions.NewTag("$ROLE$", permissions.UserGroup(*update).Prefix),
+		permissions.NewTag("$permission-prefix-full$", permissions.ParseHashTags(
+			permissionsPrefixFull,
+			[]permissions.HashTags{
+				permissions.NewTag("$ROLE$", permissions.UserGroup(*update).Prefix),
+			},
+		)),
+	})
+
+	welcomeMessage := tgbotapi.NewMessage(update.Message.Chat.ID, parsedMessage)
+	welcomeMessage.ReplyMarkup = tgbotapi.NewInlineKeyboardMarkup(
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData("[⚜️] Часы", ShowClockMenu),
+			tgbotapi.NewInlineKeyboardButtonData("[👨‍💻] Заказы", ShowOrderMenu),
+		),
+	)
+	if _, err := api.bot.Send(welcomeMessage); err != nil {
+		panic(err)
 	}
-	return false
 }
 
 func (api *Api) StartUpdatesChecker() {
@@ -48,26 +69,25 @@ func (api *Api) StartUpdatesChecker() {
 			continue
 		}
 
-		msg := tgbotapi.NewMessage(update.Message.Chat.ID, "")
-		if !api.IsAdmin(update.Message.From.UserName) {
-			msg.Text = "Братик, ты не админ, не имеешь права на этого бота"
-			if _, err := api.bot.Send(msg); err != nil {
-				log.Fatal(err)
+		if conditions.IsPermissionGroupNil(update) {
+			stopMessage := message.MessageWithPrefix(
+				api.config.BotMessages.GlobalPrefix,
+				"Ты не принадлежишь ни к одной группе прав, поэтому доступ запрещен❌",
+				&update,
+			)
+			if _, err := api.bot.Send(stopMessage); err != nil {
+				panic(err)
 			}
 			continue
 		}
 
-		switch update.Message.Command() {
-		case "start":
-			msg.ReplyToMessageID = update.Message.MessageID
-			msg.Text = api.config.BotMessages.InitialHelp
-		case "help":
-			msg.ReplyToMessageID = update.Message.MessageID
-			msg.Text = api.config.BotMessages.InitialHelp
+		if conditions.IsStartMessage(update) {
+			showMenu(&update, api)
 		}
 
-		if _, err := api.bot.Send(msg); err != nil {
-			log.Panic(err)
+		if conditions.IsCallbackQuery(update) {
+			callbackquery.CallbackQueryRouter(update.CallbackQuery.Data)
 		}
+
 	}
 }

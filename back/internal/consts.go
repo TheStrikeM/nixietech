@@ -8,6 +8,7 @@ const (
 )
 
 const (
+	ConfigName             = "config.yaml"
 	DatabaseName           = "nixietech"
 	CollectionOrderName    = "orders"
 	CollectionClockName    = "clocks"

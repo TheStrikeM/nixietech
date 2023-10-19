@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	consts "nixietech/internal"
 	"nixietech/internal/client/telegram"
 	"nixietech/internal/fetcher"
 	strikeMongo "nixietech/internal/storage/mongo"
@@ -11,7 +12,7 @@ import (
 
 func main() {
 	log := logger.SetupLogger("local", false)
-	cfg := config.GetConfig("config.yaml")
+	cfg := config.GetConfig(consts.ConfigName)
 
 	log.Info(fmt.Sprintf("Go service success started. Mongo URI - %s", cfg.MongoURI))
 

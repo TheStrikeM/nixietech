@@ -7,7 +7,13 @@ type Config struct {
 	Admins           []string    `yaml:"admins"`
 	BotMessages      BotMessages `yaml:"bot-messages"`
 }
-
 type BotMessages struct {
-	InitialHelp string `yaml:"initial-help"`
+	InitialHelpMessage      string   `yaml:"initial-help-message"`
+	ShowMenuMessage         string   `yaml:"show-menu-message"`
+	PermissionPrefixFull    string   `yaml:"permission-prefix-full"`
+	PermissionPrefixMinimum string   `yaml:"permission-prefix-minimum"`
+	ClockPrefix             string   `yaml:"clock-prefix"`
+	OrderPrefix             string   `yaml:"order-prefix"`
+	GlobalPrefix            string   `yaml:"global-prefix"`
+	PermissionGroups        []string `yaml:"permission-groups"`
 }
