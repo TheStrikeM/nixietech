@@ -1,4 +1,4 @@
-package permissions
+package telegram
 
 import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
@@ -9,8 +9,8 @@ import (
 type PermissionGroup struct {
 	Prefix string
 	Users  []string
-	clock  ClockPermissions
-	order  OrderPermissions
+	Clock  ClockPermissions
+	Order  OrderPermissions
 }
 
 type ClockPermissions struct {
@@ -39,18 +39,25 @@ func GetAllGroups() []*PermissionGroup {
 func UserGroup(update tgbotapi.Update) *PermissionGroup {
 	for _, group := range GetAllGroups() {
 		for _, user := range group.Users {
-			if user == update.Message.From.UserName {
-				return group
+			if update.Message != nil {
+				if user == update.Message.From.UserName {
+					return group
+				}
+			} else {
+				if user == update.CallbackQuery.From.UserName {
+					return group
+				}
 			}
+
 		}
 	}
 	return nil
 }
 
 func UserClockPerms(update tgbotapi.Update) *ClockPermissions {
-	return &UserGroup(update).clock
+	return &UserGroup(update).Clock
 }
 
 func UserOrderPerms(update tgbotapi.Update) *OrderPermissions {
-	return &UserGroup(update).order
+	return &UserGroup(update).Order
 }

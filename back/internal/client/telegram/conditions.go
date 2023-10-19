@@ -1,12 +1,11 @@
-package conditions
+package telegram
 
 import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-	"nixietech/internal/client/telegram/permissions"
 )
 
 func IsPermissionGroupNil(update tgbotapi.Update) bool {
-	return permissions.UserGroup(update) == nil && update.Message != nil
+	return UserGroup(update) == nil && update.Message != nil
 }
 
 func IsStartMessage(update tgbotapi.Update) bool {

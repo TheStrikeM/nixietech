@@ -10,6 +10,8 @@ type Config struct {
 type BotMessages struct {
 	InitialHelpMessage      string   `yaml:"initial-help-message"`
 	ShowMenuMessage         string   `yaml:"show-menu-message"`
+	ClockMenuMessage        string   `yaml:"clock-menu-message"`
+	OrderMenuMessage        string   `yaml:"order-menu-message"`
 	PermissionPrefixFull    string   `yaml:"permission-prefix-full"`
 	PermissionPrefixMinimum string   `yaml:"permission-prefix-minimum"`
 	ClockPrefix             string   `yaml:"clock-prefix"`
