@@ -18,4 +18,5 @@ type BotMessages struct {
 	OrderPrefix             string   `yaml:"order-prefix"`
 	GlobalPrefix            string   `yaml:"global-prefix"`
 	PermissionGroups        []string `yaml:"permission-groups"`
+	ClockItemMessage        string   `yaml:"clock-item-message"`
 }

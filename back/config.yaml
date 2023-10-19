@@ -30,12 +30,12 @@ bot-messages:
   order-menu-message: "$permission-prefix-full$
   $PREFIX$\n\n
   Так, включен режим управления заказами, ты можешь закрыть заказ, попросить отобразить заказ в удобном виде 👨‍💻‍"
-  clock-item-message: "[⚜️] Часы $CLOCK_NAME$, Цена - $CLOCK_PRICE$₽, В наличии - $CLOCK_EXISTENCE$, Тип часов - $CLOCK_TYPE$
-  "
+  clock-item-message: "[⚜️] Часы $CLOCK_NAME$, Цена - $CLOCK_PRICE$₽, В наличии - $CLOCK_EXISTENCE$, Тип часов - $CLOCK_TYPE$"
   order-item-message: "[👨‍💻] Заказ $ORDER_NAME$, Цена - $ORDER_PRICE$, "
   # "ИМЯ;Показывать меню часов;Создавать часы;Редактировать часы;Удалять часы;Посмотреть меню заказов;Удалять заказы"
   # пример: "Менеджер;✅;✅;❌;✅;❌"
   permission-groups: [
-    "Полный👑;✅;✅;✅;✅;✅;Kartonios,asdasd",
-    "Менеджер📂;✅;❌;❌;❌;✅;✅;thestrikem,vasya337",
+    "Полный👑;✅;✅;✅;✅;✅;Kartonios,thestrikem",
+    "Менеджер📂;✅;❌;❌;❌;✅;✅;kil,vasya337",
+    "Милашка❤️;✅;✅;✅;✅;✅;фывы,oleg"
   ]

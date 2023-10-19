@@ -22,5 +22,5 @@ func main() {
 	fetcher := fetcher.New(storage, cfg)
 	botAPI := telegram.New(cfg, *fetcher)
 
-	botAPI.StartUpdatesChecker()
+	botAPI.StartUpdatesChecker(*fetcher)
 }

@@ -8,7 +8,10 @@ import (
 	"nixietech/internal/config"
 	"nixietech/internal/fetcher"
 	"nixietech/utils/telegram/message"
+	"strconv"
 )
+
+var fetcherManager fetcher.Fetcher
 
 type Api struct {
 	bot     *tgbotapi.BotAPI
@@ -38,7 +41,8 @@ func (api *Api) Config() *config.Config {
 	return api.config
 }
 
-func (api *Api) StartUpdatesChecker() {
+func (api *Api) StartUpdatesChecker(fetcherApi fetcher.Fetcher) {
+	fetcherManager = fetcherApi
 	u := tgbotapi.NewUpdate(0)
 	u.Timeout = 60
 
@@ -123,5 +127,28 @@ func ShowClockMenuFunc(update *tgbotapi.Update, api *Api) {
 	)
 	if _, err := api.bot.Send(finalMessage); err != nil {
 		panic(err)
+	}
+
+	allClocks, err := fetcherManager.GetAll()
+	if err != nil {
+		panic(err)
+	}
+	for _, clock := range allClocks {
+		clockMessage := ParseHashTags(api.config.BotMessages.ClockItemMessage, []HashTags{
+			NewTag("$CLOCK_NAME$", clock.Name),
+			NewTag("$CLOCK_PRICE$", strconv.Itoa(clock.Price)),
+			NewTag("$CLOCK_EXISTENCE$", strconv.FormatBool(clock.Existence)),
+			NewTag("$CLOCK_TYPE$", strconv.Itoa(int(clock.Type))),
+		})
+		itemMessageInstance := tgbotapi.NewMessage(update.CallbackQuery.Message.Chat.ID, clockMessage)
+		itemMessageInstance.ReplyMarkup = tgbotapi.NewInlineKeyboardMarkup(
+			tgbotapi.NewInlineKeyboardRow(tgbotapi.NewInlineKeyboardButtonData("[📳] Изменить", InDev),
+				tgbotapi.NewInlineKeyboardButtonData("[❌] Удалить", CreateNewClock),
+			),
+		)
+
+		if _, err := api.bot.Send(itemMessageInstance); err != nil {
+			panic(err)
+		}
 	}
 }
