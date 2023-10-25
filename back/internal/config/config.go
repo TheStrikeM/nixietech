@@ -19,4 +19,8 @@ type BotMessages struct {
 	GlobalPrefix            string   `yaml:"global-prefix"`
 	PermissionGroups        []string `yaml:"permission-groups"`
 	ClockItemMessage        string   `yaml:"clock-item-message"`
+	PermissionDenied        string   `yaml:"permission-denied"`
+	ClockCreateStart        string   `yaml:"clock-create-start"`
+	ClockCreateFinish       string   `yaml:"clock-create-finish"`
+	RemoveItemStorage       string   `yaml:"remove-item-storage"`
 }
