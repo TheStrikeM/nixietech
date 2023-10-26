@@ -8,6 +8,7 @@ import (
 	mongoClock "nixietech/internal/storage/mongo/clock"
 	mongoOrder "nixietech/internal/storage/mongo/order"
 	mongoSettings "nixietech/internal/storage/mongo/settings"
+	"strings"
 )
 
 type Fetcher struct {
@@ -38,8 +39,13 @@ func (fetch *Fetcher) AddNewClock(clock storage.ClockWithoutId) (*storage.Clock[
 	return clockItem, nil
 }
 
-func (fetch *Fetcher) RemoveClock(id primitive.ObjectID) (*primitive.ObjectID, error) {
-	clockId, err := fetch.clockDbManager.RemoveClock(id)
+func (fetch *Fetcher) RemoveClock(id string) (*primitive.ObjectID, error) {
+	objID, err := primitive.ObjectIDFromHex(strings.Split(id, "\"")[1])
+	if err != nil {
+		return nil, err
+	}
+
+	clockId, err := fetch.clockDbManager.RemoveClock(objID)
 	if err != nil {
 		return nil, err
 	}

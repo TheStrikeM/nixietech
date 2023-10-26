@@ -22,7 +22,6 @@ func UserGroup(username string) *PermissionGroup {
 			if user == username {
 				return group
 			}
-
 		}
 	}
 	return nil

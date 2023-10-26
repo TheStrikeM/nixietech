@@ -22,5 +22,9 @@ type BotMessages struct {
 	PermissionDenied        string   `yaml:"permission-denied"`
 	ClockCreateStart        string   `yaml:"clock-create-start"`
 	ClockCreateFinish       string   `yaml:"clock-create-finish"`
+	ClockShowAll            string   `yaml:"clock-show-all"`
 	RemoveItemStorage       string   `yaml:"remove-item-storage"`
+	UndefinedMessage        string   `yaml:"undefined-message"`
+	ConfirmDeleteClock      string   `yaml:"confirm-delete-clock"`
+	SuccessDeletedClock     string   `yaml:"success-deleted-clock"`
 }

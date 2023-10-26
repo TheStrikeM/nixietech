@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log/slog"
 	consts "nixietech/internal"
 	"nixietech/internal/client/telegram"
 	"nixietech/internal/fetcher"
@@ -19,8 +20,10 @@ func main() {
 	storage, disconnect := strikeMongo.New(cfg.MongoURI)
 	defer disconnect()
 
-	fetcher := fetcher.New(storage, cfg)
-	botAPI := telegram.New(cfg, *fetcher)
+	fetcherManager := fetcher.New(storage, cfg)
+	botAPI := telegram.New(cfg, *fetcherManager)
 
-	botAPI.StartUpdatesChecker(*fetcher)
+	if err := botAPI.StartUpdatesChecker(*fetcherManager); err != nil {
+		slog.Error(err.Error())
+	}
 }
