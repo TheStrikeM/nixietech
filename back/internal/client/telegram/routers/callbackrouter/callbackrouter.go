@@ -33,13 +33,25 @@ func New(tgStorage *storage.TGStorageManager,
 	}
 }
 
+type UpdateClockTGRequest struct {
+	Name      string
+	Price     int
+	Existence bool
+	Type      consts.ClockType
+}
+
 func (router *CallbackRouter) Route() []tgbotapi.MessageConfig {
 	message := make([]tgbotapi.MessageConfig, 0, 10)
 
 	//Advanced router
 	if strings.Contains(router.update.CallbackQuery.Data, routers.CallbackDeleteClockById) {
 		router.tgStorage.AddItem(router.update.CallbackQuery.From.UserName, routers.TGStorageDeleteClockById, strings.Split(router.update.CallbackQuery.Data, ";")[1])
-		deleteMessage := tgbotapi.NewMessage(router.update.CallbackQuery.Message.Chat.ID, router.config.BotMessages.ConfirmDeleteClock)
+		deleteText := fetcher.ParseHashTags(router.config.BotMessages.ConfirmDeleteClock, []fetcher.HashTags{
+			permissions.ParseMinimumPerms(router.update.CallbackQuery.From),
+			fetcher.ParsePrefix(router.config.BotMessages.ClockPrefix),
+			fetcher.NewTag("$CLOCK_NAME$", strings.Split(router.update.CallbackQuery.Data, ";")[1]),
+		})
+		deleteMessage := tgbotapi.NewMessage(router.update.CallbackQuery.Message.Chat.ID, deleteText)
 		deleteMessage.ReplyMarkup = tgbotapi.NewInlineKeyboardMarkup(tgbotapi.NewInlineKeyboardRow(tgbotapi.NewInlineKeyboardButtonData("[❌] Отмена", routers.CallbackRemoveItemStorage)))
 		message = append(message, deleteMessage)
 		return message
@@ -47,11 +59,10 @@ func (router *CallbackRouter) Route() []tgbotapi.MessageConfig {
 
 	if strings.Contains(router.update.CallbackQuery.Data, routers.CallbackUpdateClockById) {
 		router.tgStorage.AddItem(router.update.CallbackQuery.From.UserName, routers.TGStorageUpdateClockById, strings.Split(router.update.CallbackQuery.Data, ";")[1])
-		updateMessage := tgbotapi.NewMessage(router.update.CallbackQuery.Message.Chat.ID, "Братик, ты уверен, что хочешь начать изменение?")
+		updateMessage := tgbotapi.NewMessage(router.update.CallbackQuery.Message.Chat.ID, router.config.BotMessages.StartUpdateClock)
 		updateMessage.ReplyMarkup = tgbotapi.NewInlineKeyboardMarkup(
 			tgbotapi.NewInlineKeyboardRow(
-				tgbotapi.NewInlineKeyboardButtonData("[❌] Нет", routers.CallbackRemoveItemStorage),
-				tgbotapi.NewInlineKeyboardButtonData("[✅] Да", routers.TGStorageUpdateClockById),
+				tgbotapi.NewInlineKeyboardButtonData("[❌] Отмена", routers.CallbackRemoveItemStorage),
 			),
 		)
 		message = append(message, updateMessage)
@@ -75,7 +86,9 @@ func (router *CallbackRouter) Route() []tgbotapi.MessageConfig {
 			message = append(message, ShowDontPerms(&router.update, router.config, router.config.BotMessages.ClockPrefix))
 		}
 	case routers.CallbackRemoveItemStorage:
-		message = append(message, ShowRemoveItemStorage(&router.update, router.config, router.tgStorage))
+		for _, itemMessage := range ShowRemoveItemStorage(&router.update, router.config, router.tgStorage) {
+			message = append(message, itemMessage)
+		}
 	case routers.CallbackShowAllClocks:
 		for _, itemMessage := range ShowAllClocks(&router.update, router.config, router.fetcher) {
 			message = append(message, itemMessage)
@@ -154,9 +167,12 @@ func ShowAllClocks(update *tgbotapi.Update, config *config.Config, fetcherManage
 	return messages
 }
 
-func ShowRemoveItemStorage(update *tgbotapi.Update, config *config.Config, tgStorage *storage.TGStorageManager) tgbotapi.MessageConfig {
+func ShowRemoveItemStorage(update *tgbotapi.Update, config *config.Config, tgStorage *storage.TGStorageManager) []tgbotapi.MessageConfig {
+	messages := make([]tgbotapi.MessageConfig, 0, 2)
 	tgStorage.RemoveItem(update.CallbackQuery.From.UserName)
-	return tgbotapi.NewMessage(update.CallbackQuery.Message.Chat.ID, config.BotMessages.RemoveItemStorage)
+	messages = append(messages, tgbotapi.NewMessage(update.CallbackQuery.Message.Chat.ID, config.BotMessages.RemoveItemStorage))
+	messages = append(messages, routers.ShowMenu(update.CallbackQuery.Message.Chat.ID, update.CallbackQuery.From, config))
+	return messages
 }
 
 func ShowDontPerms(update *tgbotapi.Update, config *config.Config, prefix string) tgbotapi.MessageConfig {

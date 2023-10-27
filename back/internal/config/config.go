@@ -27,4 +27,5 @@ type BotMessages struct {
 	UndefinedMessage        string   `yaml:"undefined-message"`
 	ConfirmDeleteClock      string   `yaml:"confirm-delete-clock"`
 	SuccessDeletedClock     string   `yaml:"success-deleted-clock"`
+	StartUpdateClock        string   `yaml:"start-update-clock"`
 }

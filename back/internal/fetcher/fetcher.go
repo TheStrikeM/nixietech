@@ -60,8 +60,13 @@ func (fetch *Fetcher) GetAll() ([]storage.Clock[primitive.ObjectID], error) {
 	return allClocks, nil
 }
 
-func (fetch *Fetcher) ClockById(id primitive.ObjectID) (*storage.Clock[primitive.ObjectID], error) {
-	clock, err := fetch.clockDbManager.ClockById(id)
+func (fetch *Fetcher) ClockById(id string) (*storage.Clock[primitive.ObjectID], error) {
+	objId, err := primitive.ObjectIDFromHex(strings.Split(id, "\"")[1])
+	if err != nil {
+		return nil, err
+	}
+
+	clock, err := fetch.clockDbManager.ClockById(objId)
 	if err != nil {
 		return nil, err
 	}

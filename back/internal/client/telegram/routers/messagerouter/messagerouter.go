@@ -5,6 +5,7 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	consts "nixietech/internal"
 	"nixietech/internal/client/telegram/routers"
+	"nixietech/internal/client/telegram/routers/callbackrouter"
 	"nixietech/internal/client/telegram/storage"
 	"nixietech/internal/config"
 	"nixietech/internal/fetcher"
@@ -54,9 +55,48 @@ func (router *MessageRouter) Route() tgbotapi.MessageConfig {
 		message = CreateClock(router.update, router.config, router.tgStorage, router.fetcher)
 	case routers.TGStorageDeleteClockById:
 		message = DeleteClockById(router.update, router.config, router.tgStorage, router.fetcher)
+	case routers.TGStorageUpdateClockById:
+
 	}
 
 	return message
+}
+
+func UpdateClockById(update tgbotapi.Update, config *config.Config, tgStorage storage.TGStorageManager, fetcher fetcher.Fetcher) tgbotapi.MessageConfig {
+	parsedData := strings.Split(update.Message.Text, ";")
+
+	clock, err := fetcher.ClockById(tgStorage.Item(update.Message.From.UserName).Message)
+	if err != nil {
+		panic(err)
+	}
+
+	newClock := callbackrouter.UpdateClockTGRequest{}
+	if parsedData[0] != "d" {
+		newClock.Name = parsedData[0]
+	} else {
+		newClock.Name = clock.Name
+	}
+
+	if parsedData[1] != "d" {
+		price, _ := strconv.Atoi(parsedData[1])
+		newClock.Price = price
+	} else {
+		newClock.Price = clock.Price
+	}
+
+	if parsedData[2] != "d" {
+		newClock.Existence = permissions.ParseTrueFalse(parsedData[2])
+	} else {
+		newClock.Existence = clock.Existence
+	}
+
+	if parsedData[3] != "d" {
+		res, _ := strconv.Atoi(parsedData[3])
+		newClock.Type = consts.IntToClockType(res)
+	} else {
+		newClock.Type = clock.Type
+	}
+
 }
 
 func DeleteClockById(update tgbotapi.Update, config *config.Config, tgStorage *storage.TGStorageManager, fetcher fetcher.Fetcher) tgbotapi.MessageConfig {
