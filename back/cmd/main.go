@@ -6,6 +6,7 @@ import (
 	consts "nixietech/internal"
 	"nixietech/internal/client/telegram"
 	"nixietech/internal/fetcher"
+	"nixietech/internal/server"
 	strikeMongo "nixietech/internal/storage/mongo"
 	"nixietech/utils/config"
 	"nixietech/utils/logger"
@@ -22,6 +23,9 @@ func main() {
 
 	fetcherManager := fetcher.New(storage, cfg)
 	botAPI := telegram.New(cfg, *fetcherManager)
+
+	restapi := server.New(*fetcherManager, ":8080")
+	go restapi.StartServer()
 
 	if err := botAPI.StartUpdatesChecker(*fetcherManager); err != nil {
 		slog.Error(err.Error())

@@ -23,25 +23,23 @@ type Clock[T primitive.ObjectID] struct {
 	Type      consts.ClockType `bson:"type"`
 }
 
-type OrderWithoutId[T primitive.ObjectID] struct {
-	Wishes     string        `bson:"wishes"`
-	Contact    string        `bson:"contact"`
-	ClockId    T             `bson:"clock_id"`
-	Base       BasedSettings `bson:"base"`
-	SettingsId T             `bson:"settings_id"`
+type OrderWithoutId[T primitive.ObjectID | string] struct {
+	Wishes  string        `bson:"wishes" json:"wishes"`
+	Contact string        `bson:"contact" json:"contact"`
+	ClockId T             `bson:"clock_id" json:"clock_id"`
+	Base    BasedSettings `bson:"base" json:"base"`
 }
 type Order[T primitive.ObjectID] struct {
-	Id         T             `bson:"_id"`
-	Wishes     string        `bson:"wishes"`
-	Contact    string        `bson:"contact"`
-	ClockId    T             `bson:"clock_id"`
-	Base       BasedSettings `bson:"base"`
-	SettingsId T
+	Id      T             `bson:"_id"`
+	Wishes  string        `bson:"wishes"`
+	Contact string        `bson:"contact"`
+	ClockId T             `bson:"clock_id"`
+	Base    BasedSettings `bson:"base"`
 }
 type BasedSettings struct {
-	LegsType      []string `bson:"legs_type"`
-	EngravingType []string `bson:"engraving_type"`
-	PackageType   []string `bson:"package_type"`
+	LegsType      []string `bson:"legs_type" json:"legs_type"`
+	EngravingType []string `bson:"engraving_type" json:"engraving_type"`
+	PackageType   []string `bson:"package_type" json:"package_type"`
 }
 
 type TypeOneSettingsWithoutId struct {

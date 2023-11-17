@@ -97,6 +97,7 @@ func UpdateClockById(update tgbotapi.Update, config *config.Config, tgStorage st
 		newClock.Type = clock.Type
 	}
 
+	return tgbotapi.NewMessage(update.Message.Chat.ID, config.BotMessages.SuccessDeletedClock) // TODO: Доделать
 }
 
 func DeleteClockById(update tgbotapi.Update, config *config.Config, tgStorage *storage.TGStorageManager, fetcher fetcher.Fetcher) tgbotapi.MessageConfig {

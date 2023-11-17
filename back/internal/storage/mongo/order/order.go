@@ -28,12 +28,11 @@ func (manager *Order) AddOrder(order storage.OrderWithoutId[primitive.ObjectID])
 		return nil, err
 	}
 	return &storage.Order[primitive.ObjectID]{
-		Id:         mongoStorage.ObjectId(mongoStorage.InsertedIdToString(orderId.InsertedID)),
-		Wishes:     order.Wishes,
-		Contact:    order.Contact,
-		ClockId:    order.ClockId,
-		Base:       order.Base,
-		SettingsId: order.SettingsId,
+		Id:      mongoStorage.ObjectId(mongoStorage.InsertedIdToString(orderId.InsertedID)),
+		Wishes:  order.Wishes,
+		Contact: order.Contact,
+		ClockId: order.ClockId,
+		Base:    order.Base,
 	}, nil
 }
 
@@ -53,12 +52,11 @@ func (manager *Order) UpdateOrder(
 		return nil, err
 	}
 	return &storage.Order[primitive.ObjectID]{
-		Id:         mongoStorage.ObjectId(mongoStorage.InsertedIdToString(orderId.UpsertedID)),
-		Wishes:     updatedOrder.Wishes,
-		Contact:    updatedOrder.Contact,
-		ClockId:    updatedOrder.ClockId,
-		Base:       updatedOrder.Base,
-		SettingsId: updatedOrder.SettingsId,
+		Id:      mongoStorage.ObjectId(mongoStorage.InsertedIdToString(orderId.UpsertedID)),
+		Wishes:  updatedOrder.Wishes,
+		Contact: updatedOrder.Contact,
+		ClockId: updatedOrder.ClockId,
+		Base:    updatedOrder.Base,
 	}, nil
 }
 

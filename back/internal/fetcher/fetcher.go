@@ -60,6 +60,20 @@ func (fetch *Fetcher) GetAll() ([]storage.Clock[primitive.ObjectID], error) {
 	return allClocks, nil
 }
 
+func (fetch *Fetcher) CreateOrder(order *storage.OrderWithoutId[string]) (*storage.Order[primitive.ObjectID], error) {
+	newOrder := storage.OrderWithoutId[primitive.ObjectID]{
+		Wishes:  order.Wishes,
+		Contact: order.Contact,
+		ClockId: mongoStorage.ObjectId(order.ClockId),
+		Base:    order.Base,
+	}
+	orderWithId, err := fetch.orderDbManager.AddOrder(newOrder)
+	if err != nil {
+		return nil, err
+	}
+	return orderWithId, nil
+}
+
 func (fetch *Fetcher) ClockById(id string) (*storage.Clock[primitive.ObjectID], error) {
 	objId, err := primitive.ObjectIDFromHex(strings.Split(id, "\"")[1])
 	if err != nil {
